@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using IPDTrackerWebApp.Data;
 using IPDTrackerWebApp.Services;
+using Microsoft.Extensions.Logging;
+using System.Reflection;
+using NJsonSchema;
+using NSwag.AspNetCore;
 
 namespace IPDTrackerWebApp
 {
@@ -27,11 +31,19 @@ namespace IPDTrackerWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("IPDTrackerConnection")));
+            services.AddDbContext<IPDContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("IPDTrackerConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            //services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+            //{
+            //    microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ApplicationId"];
+            //    microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
+            //});
 
             services.AddMvc()
                 .AddRazorPagesOptions(options =>
@@ -46,7 +58,7 @@ namespace IPDTrackerWebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -58,6 +70,15 @@ namespace IPDTrackerWebApp
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
+            app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, settings =>
+            {
+                settings.GeneratorSettings.DefaultPropertyNameHandling =
+                    PropertyNameHandling.CamelCase;
+            });
 
             app.UseStaticFiles();
 
