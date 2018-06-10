@@ -29,5 +29,7 @@ namespace IPDTrackerWebApp.Controllers
             _logger.LogInformation("User logged out.");
             return RedirectToPage("/Index");
         }
+
+        //do I want an API that will let registration take place from a mobile app?
     }
 }

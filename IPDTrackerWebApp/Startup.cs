@@ -39,11 +39,11 @@ namespace IPDTrackerWebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            //services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
-            //{
-            //    microsoftOptions.ClientId = Configuration["ApplicationId"]; //Authentication:Microsoft:
-            //    microsoftOptions.ClientSecret = Configuration["Password"]; //Authentication: Microsoft:
-            //});
+            services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+            {
+                microsoftOptions.ClientId = Configuration["ApplicationId"]; //Authentication:Microsoft:
+                microsoftOptions.ClientSecret = Configuration["Password"]; //Authentication: Microsoft:
+            });
 
             services.AddMvc()
                 .AddRazorPagesOptions(options =>

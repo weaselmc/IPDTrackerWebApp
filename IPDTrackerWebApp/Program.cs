@@ -6,7 +6,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
 
@@ -61,9 +63,9 @@ namespace IPDTrackerWebApp
 
     //        keyVaultConfigBuilder.AddAzureKeyVault
     //            (
-    //            $"https://{builtConfig["KeyVault:Vault"]}.vault.azure.net/",
-    //            builtConfig["KeyVault:ClientId"],
-    //            builtConfig["KeyVault:ClientSecret"],
+    //            $"https://{builtConfig["Vault"]}.vault.azure.net/",
+    //            builtConfig["ClientId"],
+    //            builtConfig["ClientSecret"],
     //            new PrefixKeyVaultSecretManager(versionPrefix));
 
     //        var keyVaultConfig = keyVaultConfigBuilder.Build();
@@ -73,10 +75,33 @@ namespace IPDTrackerWebApp
     //    .UseStartup<Startup>();
     //}
 
-    public static IWebHost BuildWebHost(string[] args) =>
-               WebHost.CreateDefaultBuilder(args)
-                   .UseStartup<Startup>()
-                   .Build();
+    //public static IWebHost BuildWebHost(string[] args) =>
+    //           WebHost.CreateDefaultBuilder(args)
+    //               .UseStartup<Startup>()
+    //               .Build();
 
+    //}
+
+    public static IWebHost BuildWebHost(string[] args) =>
+        WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((ctx, builder) =>
+            {
+                var keyVaultEndpoint = GetKeyVaultEndpoint();
+                if (!string.IsNullOrEmpty(keyVaultEndpoint))
+                {
+                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    var keyVaultClient = new KeyVaultClient(
+                        new KeyVaultClient.AuthenticationCallback(
+                            azureServiceTokenProvider.KeyVaultTokenCallback));
+                    builder.AddAzureKeyVault(
+                        keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
+                }
+            }
+         )
+            .UseStartup<Startup>()
+            .Build();
+
+    private static string GetKeyVaultEndpoint() => "https://IPDTrackerKeyVault.vault.azure.net";
 }
+
 }
