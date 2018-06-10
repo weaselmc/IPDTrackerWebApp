@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
-using Microsoft.Extensions.Logging;
 
 namespace IPDTrackerWebApp
 {
@@ -49,34 +48,35 @@ namespace IPDTrackerWebApp
             }
         }
 
-        //    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        //        WebHost.CreateDefaultBuilder(args)
-        //    .ConfigureAppConfiguration((context, config) =>
-        //    {
-        //        var appVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
-        //        var versionPrefix = appVersion.Replace(".", string.Empty);
+    //    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+    //        WebHost.CreateDefaultBuilder(args)
+    //    .ConfigureAppConfiguration((context, config) =>
+    //    {
+    //        var appVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
+    //        var versionPrefix = appVersion.Replace(".", string.Empty);
 
-        //        var builtConfig = config.Build();
+    //        var builtConfig = config.Build();
 
-        //        var keyVaultConfigBuilder = new ConfigurationBuilder();
+    //        var keyVaultConfigBuilder = new ConfigurationBuilder();
 
-        //        keyVaultConfigBuilder.AddAzureKeyVault
-        //            (@"https://ipdtrackerkeyvault.vault.azure.net/",
-        //            "23073aaa-6501-442b-ae58-38c04df1fd75",
+    //        keyVaultConfigBuilder.AddAzureKeyVault
+    //            (
+    //            $"https://{builtConfig["KeyVault:Vault"]}.vault.azure.net/",
+    //            builtConfig["KeyVault:ClientId"],
+    //            builtConfig["KeyVault:ClientSecret"],
+    //            new PrefixKeyVaultSecretManager(versionPrefix));
 
-        //            new PrefixKeyVaultSecretManager(versionPrefix));
+    //        var keyVaultConfig = keyVaultConfigBuilder.Build();
 
-        //        var keyVaultConfig = keyVaultConfigBuilder.Build();
+    //        config.AddConfiguration(keyVaultConfig);
+    //    })
+    //    .UseStartup<Startup>();
+    //}
 
-        //        config.AddConfiguration(keyVaultConfig);
-        //    })
-        //    .UseStartup<Startup>();
-        //}
-
-        public static IWebHost BuildWebHost(string[] args) =>
+    public static IWebHost BuildWebHost(string[] args) =>
                WebHost.CreateDefaultBuilder(args)
                    .UseStartup<Startup>()
                    .Build();
 
-    }
+}
 }
