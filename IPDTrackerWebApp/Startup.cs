@@ -30,20 +30,10 @@ namespace IPDTrackerWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("IPDTrackerConnection")));
+            services.AddDbContext<IPDContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("IPDTrackerConnection")));
-                services.AddDbContext<IPDContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("IPDTrackerConnection")));
-            }
-            else
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlite("Data Source=localdatabase.db"));
-                services.AddDbContext<IPDContext>(options =>
-                    options.UseSqlite("Data Source=localdatabase.db"));
-            }
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -65,8 +55,6 @@ namespace IPDTrackerWebApp
             // Register no-op EmailSender used by account confirmation and password reset during development
             // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
             services.AddSingleton<IEmailSender, EmailSender>();
-            services.BuildServiceProvider().GetService<IPDContext>().Database.Migrate();
-            services.BuildServiceProvider().GetService<ApplicationDbContext>().Database.Migrate();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

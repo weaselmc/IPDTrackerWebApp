@@ -97,9 +97,11 @@ namespace IPDTrackerWebApp
                         keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
                 }
             }
-         ).UseStartup<Startup>().Build();
+         )
+            .UseStartup<Startup>()
+            .Build();
 
-        private static string GetKeyVaultEndpoint() => "https://IPDTrackerKeyVault.vault.azure.net";
-    }
+    private static string GetKeyVaultEndpoint() => "https://IPDTrackerKeyVault.vault.azure.net";
+}
 
 }
